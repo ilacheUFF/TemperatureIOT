@@ -5,7 +5,7 @@
 Steps for send email from thinkspeak
 https://blogs.mathworks.com/iot/2020/01/10/send-email-alerts-from-thingspeak/#:~:text=ThingSpeak%20now%20offers%20email%20alerts,then%20respond%20with%20an%20email.
 
-Matlab Analisys code
+# Matlab Analisys code
 
 alert_body = 'Temperatura acima do estipulado';
 alert_subject = 'Temperatura do Lab está acima do estipulado';
@@ -15,5 +15,5 @@ jsonmessage = sprintf(['{"subject": "%s", "body": "%s"}'], alert_subject,alert_b
 options = weboptions("HeaderFields", {'Thingspeak-Alerts-API-Key', alert_api_key; 'Content-Type','application/json'});
 result = webwrite(alert_url, jsonmessage, options);
 
-Thinkspeak tutorial
+# Thinkspeak tutorial
 https://www.filipeflop.com/blog/esp8266-com-thingspeak/
