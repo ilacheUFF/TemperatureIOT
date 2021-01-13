@@ -9,8 +9,8 @@
 
  
 /* defines - wi-fi */
-#define SSID_REDE "iPhone de Ivan" /* coloque aqui o nome da rede que se deseja conectar */
-#define SENHA_REDE "1234567n" /* coloque aqui a senha da rede que se deseja conectar */
+#define SSID_REDE "" /* coloque aqui o nome da rede que se deseja conectar */
+#define SENHA_REDE "" /* coloque aqui a senha da rede que se deseja conectar */
 #define INTERVALO_ENVIO_THINGSPEAK 30000 /* intervalo entre envios de dados ao ThingSpeak (em ms) */
  
 /* A biblioteca serve para os sensores DHT11, DHT22 e DHT21.
@@ -24,7 +24,7 @@
  
 /* constantes e variáveis globais */
 char endereco_api_thingspeak[] = "api.thingspeak.com";
-String chave_escrita_thingspeak = "DMFJ7GCBVB21DWXA";  /* Coloque aqui sua chave de escrita do seu canal */
+String chave_escrita_thingspeak = "";  /* Coloque aqui sua chave de escrita do seu canal */
 unsigned long last_connection_time;
 
 WiFiClient client;
