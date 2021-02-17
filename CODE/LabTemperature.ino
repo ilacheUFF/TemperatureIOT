@@ -1,42 +1,30 @@
 #include <ESP8266WiFi.h> //essa biblioteca já vem com a IDE. Portanto, não é preciso baixar nenhuma biblioteca adicional
-#include <DHT.h>
- 
-/*
-* Defines do projeto
-*/
-//GPIO do NodeMCU que o pino de comunicação do sensor está ligado.
-#define DHTPIN D1
-
  
 /* defines - wi-fi */
-#define SSID_REDE "" /* coloque aqui o nome da rede que se deseja conectar */
-#define SENHA_REDE "" /* coloque aqui a senha da rede que se deseja conectar */
-#define INTERVALO_ENVIO_THINGSPEAK 30000 /* intervalo entre envios de dados ao ThingSpeak (em ms) */
+#define SSID_REDE "Federal 2014" /* coloque aqui o nome da rede que se deseja conectar */
+#define SENHA_REDE "bucaramanga" /* coloque aqui a senha da rede que se deseja conectar */
+//#define SSID_REDE "iPhone de Ivan" /* coloque aqui o nome da rede que se deseja conectar */
+//#define SENHA_REDE "1234567n" /* coloque aqui a senha da rede que se deseja conectar */
+//#define SSID_REDE "LABMAQ_Estufa" /* coloque aqui o nome da rede que se deseja conectar */
+//#define SENHA_REDE "#trem015423" /* coloque aqui a senha da rede que se deseja conectar */
+#define INTERVALO_ENVIO_THINGSPEAK 60000 /* intervalo entre envios de dados ao ThingSpeak (em ms) */
+#define LED_PLACA 16
  
-/* A biblioteca serve para os sensores DHT11, DHT22 e DHT21.
-* No nosso caso, usaremos o DHT22, porém se você desejar utilizar
-* algum dos outros disponíveis, basta descomentar a linha correspondente.
-*/
- 
-//#define DHTTYPE DHT11 // DHT 11
-#define DHTTYPE DHT22 // DHT 22 (AM2302), AM2321
-//#define DHTTYPE DHT21 // DHT 21 (AM2301
  
 /* constantes e variáveis globais */
 char endereco_api_thingspeak[] = "api.thingspeak.com";
-String chave_escrita_thingspeak = "";  /* Coloque aqui sua chave de escrita do seu canal */
+String chave_escrita_thingspeak = "5CSPHE3WFIE5LRGY";  /* Coloque aqui sua chave de escrita do seu canal */
 unsigned long last_connection_time;
 
 WiFiClient client;
 
-//5 DHT dht(DHTPIN, DHTTYPE);
- 
+
 /* prototypes */
 void envia_informacoes_thingspeak(String string_dados);
 void init_wifi(void);
 void conecta_wifi(void);
 void verifica_conexao_wifi(void);
-void piscar(void);
+void piscar(int tempo);
  
 /*
 * Implementações
@@ -63,7 +51,7 @@ void envia_informacoes_thingspeak(String string_dados)
          
         last_connection_time = millis();
         Serial.println("- Informações enviadas ao ThingSpeak!");
-        piscar();
+        piscar(900);
     }
 }
  
@@ -99,10 +87,14 @@ void conecta_wifi(void)
     while (WiFi.status() != WL_CONNECTED)
     {
         delay(100);
+        digitalWrite(LED_PLACA, LOW);
     }
  
     Serial.println("Conectado com sucesso a rede wi-fi \n");
     Serial.println(SSID_REDE);
+    digitalWrite(LED_PLACA, HIGH);
+    piscar(500);
+    piscar(500);
 }
  
 /* Função: verifica se a conexao wi-fi está ativa
@@ -119,22 +111,32 @@ void verifica_conexao_wifi(void)
  *  
  *  
  */
- void piscar(void)
+ void piscar(int tempo)
  {
   digitalWrite(LED_BUILTIN, HIGH);
-  delay(900);
+  delay(tempo);
   digitalWrite(LED_BUILTIN, LOW);
-  delay(900);
+  delay(tempo);
+ }
+
+ float ler_temperatura(void)
+ {
+  int valorObtido = analogRead(A0);
+  float milivolts = (valorObtido/1024.0) * 3300; 
+  float celsius = milivolts/10;
+  Serial.print("A temperatura é de = ");
+  Serial.println(celsius);
+  return(celsius);
  }
  
 void setup()
 {
     Serial.begin(115200);
     pinMode(LED_BUILTIN, OUTPUT);
+    pinMode(LED_PLACA, OUTPUT);
     last_connection_time = 0;
  
     /* Inicializa sensor de temperatura e umidade relativa do ar */
-    //5 dht.begin();
  
     /* Inicializa e conecta-se ao wi-fi */
     init_wifi();
@@ -161,11 +163,10 @@ void loop()
     /* Verifica se é o momento de enviar dados para o ThingSpeak */
     if( millis() - last_connection_time > INTERVALO_ENVIO_THINGSPEAK )
     {
-        temperatura_lida = 28 + temperatura_lida;
-        umidade_lida=5.5;
-        //5 temperatura_lida = dht.readTemperature();
-        //5 umidade_lida = dht.readHumidity();
-        sprintf(fields_a_serem_enviados,"field1=%.2f&field2=%.2f", temperatura_lida, umidade_lida);
+        temperatura_lida = ler_temperatura();        
+        //temperatura_lida = dht.readTemperature();
+        //umidade_lida = dht.readHumidity();
+        sprintf(fields_a_serem_enviados,"field1=%.2f&field2=%.2f", temperatura_lida, temperatura_lida);
         envia_informacoes_thingspeak(fields_a_serem_enviados);
     }
  
