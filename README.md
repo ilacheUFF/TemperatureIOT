@@ -17,3 +17,6 @@ result = webwrite(alert_url, jsonmessage, options);
 
 # Thinkspeak tutorial
 https://www.filipeflop.com/blog/esp8266-com-thingspeak/
+
+# How to connect temperature sensor
+https://medium.com/@automacaoem5minutos/guia-r%C3%A1pido-12-medindo-temperaturas-com-lm35-e-esp8266-nodemcu-1ae47b3dd991
